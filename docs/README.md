@@ -129,7 +129,32 @@ docker-compose -f docker-compose.initial.yml up --build -d
 
 ### solution
 
-> explain briefly your solution for this problem here
+- **Problem**:
+The initial data in the user_home table was not normalized, leading to redundancy and potential issues with data integrity. The goal was to refactor the data into a normalized structure using at least two tables: user and home, ensuring proper relationships with foreign keys.
+
+### Steps Taken:
+1. **Created user Table**:
+
+- Columns: username (Primary Key), email
+- This table stores unique user information, ensuring each user is represented only once.
+- Created home Table:
+
+- Columns: home_id (Primary Key), street_address, and other relevant home attributes.
+- This table stores unique home information.
+- Created user_home Junction Table:
+
+- Columns: user_id, home_id
+- Established a many-to-many relationship between users and homes by using foreign keys to reference the user and home tables.
+  Populated the Tables:
+
+- Migrated data from the original user_home table into the newly created tables, ensuring all relationships were preserved.
+- Created SQL Script:
+
+- Created 99_final_db_dump.sql to reflect all changes, ensuring the database transitions from its initial state to the normalized structure.\
+
+**SQL Script Execution**:
+- The script 99_final_db_dump.sql can be executed to transform the database into the normalized state. This script includes the creation of the new tables, 
+  foreign key relationships, and migration of existing data.
 
 ## 2. React SPA
 
