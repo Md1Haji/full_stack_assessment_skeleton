@@ -570,13 +570,13 @@ cd backend/HomeTorm
     `npm install`
 
 4. Run the frontend and backend:
-    . Run the frontend and backend:
-    . Start the backend server (Node.js):
-      cd backend/HomeTorm
+    1. Run the frontend and backend:
+      # Start the backend server (Node.js):
+        . cd backend/HomeTorm
         `npx tsc`
         `node dist/app.js`
-    . Start the fronted React:
-      cd frontend/home_assessment-main
+    # Start the fronted React:
+      . cd frontend/home_assessment-main
         `npm start`
 
 
