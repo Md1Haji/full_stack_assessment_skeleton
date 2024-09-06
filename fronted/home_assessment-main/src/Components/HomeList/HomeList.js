@@ -1,33 +1,24 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchHomesByUser } from '../../features/homeSlice';
 import EditUserModel from '../EditUserModal/EditUserModel';
 import styles from './HomeList.module.css';
 
 const HomeList = ({ selectedUser }) => {
-    const [isEditVisible, setIsEditVisible] = useState(false);
-    const [currentHomeId, setCurrentHomeId] = useState(null);
-    const [currentHomeName, setCurrentHomeName] = useState("");
-    const [homes, setHomes] = useState([]);
+    const dispatch = useDispatch();
+    const homes = useSelector((state) => state.homes.list);
+    const status = useSelector((state) => state.homes.status);
+    const [isEditVisible, setIsEditVisible] = React.useState(false);
+    const [selectedHome, setSelectedHome] = React.useState(null);
 
     useEffect(() => {
         if (selectedUser !== "None") {
-            // Fetch homes based on the selected user
-            fetchHomes(selectedUser);
+            dispatch(fetchHomesByUser(selectedUser));
         }
-    }, [selectedUser]);
+    }, [dispatch, selectedUser]);
 
-    const fetchHomes = async (userId) => {
-        try {
-            const response = await fetch(`http://localhost:3001/home/find-by-user/${userId}`);
-            const data = await response.json();
-            setHomes(data);
-        } catch (error) {
-            console.error('Error fetching homes:', error);
-        }
-    };
-
-    const handleClick = (homeId, homeName) => {
-        setCurrentHomeId(homeId);
-        setCurrentHomeName(homeName);
+    const handleClick = (home) => {
+        setSelectedHome(home);
         setIsEditVisible(true);
     };
 
@@ -43,17 +34,11 @@ const HomeList = ({ selectedUser }) => {
                         <p>Sqft: {home.sqft} sqft</p>
                         <p>Beds: {home.beds}</p>
                         <p>Baths: {home.baths}</p>
-                        <button className={`${styles.userBtn}`} onClick={() => handleClick(home.id, home.name)}>Edit Users</button>
+                        <button className={`${styles.userBtn}`} onClick={() => handleClick(home)}>Edit Users</button>
                     </div>
                 ))}
             </div>
-            {isEditVisible && (
-                <EditUserModel
-                    setIsEditVisible={setIsEditVisible}
-                    homeId={currentHomeId}
-                    homeName={currentHomeName}
-                />
-            )}
+            {isEditVisible && <EditUserModel homeId={selectedHome.id} homeName={selectedHome.name} setIsEditVisible={setIsEditVisible} />}
         </>
     );
 };

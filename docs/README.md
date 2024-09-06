@@ -5,6 +5,7 @@
 1. [SQL databases](#1-database)
 2. [React SPA development](#2-react-spa)
 3. [Backend API development on Node](#3-backend-api-development-on-node)
+4. [Setup Installation](#4-setup-Intallation)
 
 - for each section you'll find that it has **problem**, **task**, **solution** sections:
 
@@ -135,20 +136,22 @@ The initial data in the user_home table was not normalized, leading to redundanc
 ### Steps Taken:
 1. **Created user Table**:
 
-- Columns: username (Primary Key), email
+- Columns: id (Primary key), username , email
 - This table stores unique user information, ensuring each user is represented only once.
-- Created home Table:
+- 
+2. **Created home Table**:
 
-- Columns: home_id (Primary Key), street_address, and other relevant home attributes.
+- Columns: id (Primary Key), street_address, and other relevant home attributes.
 - This table stores unique home information.
-- Created user_home Junction Table:
 
-- Columns: user_id, home_id
+- 
+3. **Created user_home_relationship Junction Table**:
+
+- Columns: id (Primary Key), username(Foreingn key), home_id(foreign key)
 - Established a many-to-many relationship between users and homes by using foreign keys to reference the user and home tables.
   Populated the Tables:
 
-- Migrated data from the original user_home table into the newly created tables, ensuring all relationships were preserved.
-- Created SQL Script:
+- Migrated data from the original user_home_relationship table into the newly created tables, ensuring all relationships were preserved.
 
 - Created 99_final_db_dump.sql to reflect all changes, ensuring the database transitions from its initial state to the normalized structure.\
 
@@ -243,9 +246,66 @@ The initial data in the user_home table was not normalized, leading to redundanc
 > [!IMPORTANT]
 > even if you can do state-management without Redux, you still must use Redux for the solution, (remember the idea is to showcase the skills)
 
-### solution
+### solution Breakdown
+-**. User-Home Relationships**
 
-> explain briefly your solution for this problem here
+    . Purpose: Show which homes a user is interested in and which users are interested in a given home.
+
+  -  **API Design**:
+       . /user/find-all: Fetch all users.
+       . /home/find-by-user/{userId}: Fetch all homes related to a specific user.
+       . /user/find-by-home/{homeId}: Fetch all users related to a specific home.
+       . /home/update-users: Update the users associated with a specific home.
+
+2. **Frontend (React)**
+        . Navbar (User Dropdown):
+
+      .  Dropdown to select a user from the list.
+        Fetch all users from the backend using the /user/find-all API.
+        When a user is selected, display all homes related to that user.
+        Home List (Home Cards):
+
+      .  For the selected user, fetch and display a list of homes they're interested in, using /home/find-by-user/{userId}.
+        Display details of each home such as name, price, state, etc.
+        Include an "Edit Users" button for each home to update the users associated with it.
+        Edit User Modal:
+
+      .  Modal to modify the users associated with a home.
+        Fetch users associated with the home using /user/find-by-home/{homeId}.
+        Allow selection (checkboxes) to update users.
+        Submit the updated users list to the backend using /home/update-users.
+
+3. **Backend (Node.js with TypeORM)**
+      Tables:
+
+      user: Contains user details like username and email.
+      home: Contains home details like id, name, list_price, etc.
+      user_home_relationship: A junction table that stores relationships between users and homes.
+      API Endpoints:
+
+      /user/find-all: Returns all users from the database.
+      /home/find-by-user/{userId}: Returns all homes associated with a given user.
+      /user/find-by-home/{homeId}: Returns all users associated with a given home.
+      /home/update-users: Updates the users associated with a given home by sending a list of usernames and home ID.
+      Data Flow:
+
+      When a user selects a home and clicks on "Edit Users", the modal opens with the current list of users associated with that  
+       home.
+      The user can modify the list of users and submit changes.
+      On submission, the backend updates the user_home_relationship table to reflect the new associations.
+
+4. **Redux Integration**
+      State Management:
+
+      Use Redux to manage the state of users and homes.
+      Dispatch actions to fetch and store users and homes in the Redux store.
+      Use selectors to get the current state of users and homes.
+      API Requests:
+
+      Use Redux Thunks or Redux Toolkit Query to handle API requests for fetching and updating data.
+
+
+> 
 
 ## 3. Backend API development on Node
 
@@ -496,9 +556,29 @@ fetch("http://baseUrl/home/update-users", requestOptions)
   .then(result => console.log(result))
   .catch(error => console.error(error));
 
-
-
 ```
+
+## 4. Set-up Installation
+To set up the installation, you will need to follow these steps:
+1. Clone the repository using the command `git clone https://github.com/username/repository.git`
+2. Navigate to the project directory using the command `cd repository`
+3. Install the required dependencies 
+cd frontend/home_assessment-main
+   `npm install`
+
+cd backend/HomeTorm
+    `npm install`
+
+4. Run the frontend and backend:
+    . Run the frontend and backend:
+    . Start the backend server (Node.js):
+      cd backend/HomeTorm
+        `npx tsc`
+        `node dist/app.js`
+    . Start the fronted React:
+      cd frontend/home_assessment-main
+        `npm start`
+
 
 
 ## Submission Guidelines

@@ -1,44 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUsers } from '../../features/userSlice';
 import styles from './Navbar.module.css';
 
 const Navbar = ({ onUserChange }) => {
-    const [users, setUsers] = useState([]);
-    const [selectedUser, setSelectedUser] = useState("None");
+    const dispatch = useDispatch();
+    const users = useSelector((state) => state.users.list);
+    const status = useSelector((state) => state.users.status);
 
     useEffect(() => {
-        // Fetch user data from the API
-        const fetchUsers = async () => {
-            try {
-                // Include the full URL if needed
-                const response = await fetch('http://localhost:3001/user/find-all');
-                const data = await response.json();
-        
-                if (Array.isArray(data)) {
-                    setUsers(data.map(user => user.username));
-                } else {
-                    console.error('Unexpected data format:', data);
-                }
-            } catch (error) {
-                console.error('Error fetching users:', error);
-            }
-        };
-
-        fetchUsers();
-    }, []);
+        if (status === 'idle') {
+            dispatch(fetchUsers());
+        }
+    }, [dispatch, status]);
 
     const handleChange = (e) => {
-        const user = e.target.value;
-        setSelectedUser(user);
-        onUserChange(user);  // Notify the parent component
+        onUserChange(e.target.value);
     };
 
     return (
         <div className={`${styles.container}`}>
             <div className={`${styles.wrapper}`}>
                 <p>Select User: &nbsp;</p>
-                <select className={styles.select} value={selectedUser} onChange={handleChange}>
+                <select className={styles.select} onChange={handleChange}>
                     <option disabled value="None">None</option>
-                    {users.map(user => (
+                    {users.map((user) => (
                         <option key={user} value={user}>{user}</option>
                     ))}
                 </select>
