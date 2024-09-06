@@ -575,9 +575,10 @@ cd backend/HomeTorm
         . cd backend/HomeTorm
         `npx tsc`
         `node dist/app.js`
-    # Start the fronted React:
-      . cd frontend/home_assessment-main
-        `npm start`
+
+      # Start the fronted React:
+        . cd frontend/home_assessment-main
+          `npm start`
 
 
 
