@@ -306,7 +306,200 @@ The initial data in the user_home table was not normalized, leading to redundanc
 
 ### solution
 
-> explain briefly your solution for this problem here
+User Home API Documentation
+
+To enable effective interaction between the web app and the database, the following solution points have been implemented:
+## User Home APIs
+
+  - **/user/find-all**: Retrieve all users.
+  - **/user/find-by-home**: Retrieve users associated with a specific home.
+  - **/home/find-by-user**: Retrieve homes associated with a specific user (with pagination).
+  - **/home/update-users**: Update the list of users associated with a specific home.
+
+  - **HTTP Methods**: Used appropriate HTTP methods (GET, POST, PUT, DELETE) for different operations.
+
+  - **JSON Interface**: Ensured all APIs use JSON format for both requests and responses.
+
+  - **Error Handling**: Implemented robust error handling with appropriate status codes and messages.
+
+  - **Database Interaction**:
+        ORM/Database Library: Utilized TypeORM (or another ORM like Prisma or Sequelize) for database interactions to simplify CRUD 
+        operations and maintain code readability.
+        Sanitization: Ensured that data sent in requests is sanitized to prevent SQL injection and other security vulnerabilities.
+        Data Validation: Validated incoming data to ensure it meets expected formats and constraints.
+
+  - **Idempotency**
+       Idempotent Operations: Ensured operations like /home/update-users are idempotent, meaning multiple identical
+         requests produce the same result as a single request.
+
+## Endpoint: /user/find-all
+
+- **Method:** Get
+- **Summary:** Retrieve all users from the database
+- **Operation ID:** cgetAllUsers
+- **Tags:** User
+- **Responses:**
+  - **200:** List of all users
+    ### Example:
+```bash
+[
+  {
+    "id": "1",
+    "username": "johndoe",
+    "email": "johndoe@example.com"
+  },
+  {
+    "id": "2",
+    "username": "janedoe",
+    "email": "janedoe@example.com"
+  }
+]
+
+
+fetch("http://baseUrl/user/find-all", {
+  method: "GET",
+  headers: {
+    "Content-Type": "application/json"
+  }
+})
+  .then(response => response.json())
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
+
+```
+
+## Endpoint: /home/find-by-user
+
+- **Method:** Get
+- **Summary:** Retrieve all homes related to a specific user with pagination support
+- **Operation ID:** getHomesByUser
+- **Tags:** Home
+- **Parameters:**
+- **userId:** The ID of the user to retrieve homes for
+- **page:** The page number for pagination (optional, default: 1)
+
+- **Responses:**
+  - **200:** 200: List of homes related to the user
+    ### Example:
+```bash
+{
+  "homes": [
+    {
+      "id": "101",
+      "street_address": "123 Elm Street",
+      "city": "Springfield",
+      "state": "IL",
+      "zip": "62701"
+    },
+    {
+      "id": "102",
+      "street_address": "456 Oak Avenue",
+      "city": "Springfield",
+      "state": "IL",
+      "zip": "62702"
+    }
+  ],
+  "page": 1,
+  "pageSize": 50,
+  "totalItems": 100
+}
+
+fetch("http://baseUrl/home/find-by-user?userId=1&page=1&pageSize=50", {
+  method: "GET",
+  headers: {
+    "Content-Type": "application/json"
+  }
+})
+  .then(response => response.json())
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
+
+
+```
+
+## Endpoint: /user/find-by-home
+
+- **Method:** Get
+- **Summary:** Retrieve all users related to a specific home
+- **Operation ID:** getUsersByHome
+- **Tags:** User
+- **Parameters:**
+- **homeId**: ID of the home to retrieve users for (query parameter)
+
+- **Responses:**
+  - **200:** List of users related to the home
+    ### Example:
+```bash
+[
+  {
+    "id": "1",
+    "username": "johndoe",
+    "email": "johndoe@example.com"
+  },
+  {
+    "id": "2",
+    "username": "janedoe",
+    "email": "janedoe@example.com"
+  }
+]
+
+fetch("http://baseUrl/user/find-by-home?homeId=101", {
+  method: "GET",
+  headers: {
+    "Content-Type": "application/json"
+  }
+})
+  .then(response => response.json())
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
+
+
+
+```
+
+## Endpoint: /home/update-users
+
+- **Method:** PUT
+- **Summary:** Update the list of users associated with a specific home
+- **Operation ID:** updateUsersByHome
+- **Tags:** Home
+- **Request Body:**
+- **homeId**: ID of the home to update (string)
+- **usernames**: Array of usernames to be associated with the home (array of strings)
+
+
+- **Responses:**
+  - **200:** Users updated successfully
+  - **400:** Invalid request body
+  - **404**: Home or users not found
+
+
+    ### Example:
+```bash
+const myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+
+const raw = JSON.stringify({
+  "homeId": "101",
+  "usernames": ["johndoe", "janedoe"]
+});
+
+const requestOptions = {
+  method: "PUT",
+  headers: myHeaders,
+  body: raw,
+  redirect: "follow"
+};
+
+fetch("http://baseUrl/home/update-users", requestOptions)
+  .then(response => response.json())
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
+
+
+
+```
+
 
 ## Submission Guidelines
 
